@@ -7,10 +7,10 @@ import MarvelService from './services/MarvelService';
 
 const marvelService = new MarvelService();
 
-marvelService.getAllCharacters()
-  .then(res => {
-    res.data.results.forEach(item => console.log(item.name));
-  })
+// marvelService.getAllCharacters()
+//   .then(res => {
+//     res.data.results.forEach(item => console.log(item));
+//   })
 
 marvelService.getCharacter(1011334)
   .then(res => console.log(res))
