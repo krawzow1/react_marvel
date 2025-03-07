@@ -2,6 +2,7 @@ import {Component} from 'react';
 import MarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import './randomChar.scss';
+import ErrorMessage from '../errorMessage/ErrorMessage';
 
 import mjolnir from '../../resources/img/mjolnir.png';
 
@@ -12,13 +13,22 @@ class RandomChar extends Component {
     }
     state = {
         char: {},
-        loading: true
+        loading: true,
+        error: false
     }
 
     marvelService = new MarvelService();
 
     onCharLoaded = (char) => {
         this.setState({char: char,
+            loading: false,
+            error: false
+        })
+    }
+
+    onError = () => {
+        this.setState({
+            error: true,
             loading: false
         })
     }
@@ -28,13 +38,22 @@ class RandomChar extends Component {
         this.marvelService
             .getCharacter(id)
             .then(this.onCharLoaded)
+            .catch(this.onError)
     }
     
     render() {
-        const {char, loading} = this.state;
+        const {char, loading, error} = this.state;
+
+        const errorMessage = error ? <ErrorMessage /> : null;
+        const spinner = loading ? <Spinner /> : null;
+        const content = !(loading || error) ? <View char={char} /> : null;
+
+
         return (
             <div className="randomchar">
-                {loading ? <Spinner /> : <View char={char} />}
+                {errorMessage}
+                {spinner}
+                {content}
                 <div className="randomchar__static">
                     <p className="randomchar__title">
                         Random character for today!<br/>

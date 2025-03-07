@@ -5,15 +5,15 @@ class MarvelService {
     getResource = async (url) => {
         let res = await fetch(url)
         if (!res.ok) {
-            throw new Error(`Could not fetch ${url}, status: ${res.status}`)
+            throw new Error(`Ошибка запроса на сервер ${url}, статус: ${res.status}`)
         }
         return await res.json()
     }
 
-    // getAllCharacters = async () => {
-    //     const res = await this.getResource(`${this._apiBase}characters?limit=9&offset=210&${this._apiKey}`)
-    //     return res.data.results.map(this._transformCharacter)
-    // }
+    getAllCharacters = async () => {
+        const res = await this.getResource(`${this._apiBase}characters?limit=9&offset=210&${this._apiKey}`)
+        return res.data.results.map(this._transformCharacter)
+    }
 
     getCharacter  = async (id) => {
         const res = await this.getResource(`${this._apiBase}characters/${id}?${this._apiKey}`)
@@ -23,7 +23,7 @@ class MarvelService {
     _transformCharacter = (char) => {
         let description = null
         if (char.description.length > 10) {
-            description = char.description.slice(0, 10) + '...'
+            description = char.description.slice(0, 200) + '...'
         } else if (char.description.length < 10) {
             description = 'Этот персонаж пока не имеет описания'
         } else {
