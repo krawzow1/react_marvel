@@ -15,7 +15,7 @@ class RandomChar extends Component {
     }
 
     marvelService = new MarvelService();
-
+    
     componentDidMount() {
         this.updateChar();
        
@@ -43,6 +43,7 @@ class RandomChar extends Component {
 
     updateChar = () => {
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
+        this.setState({loading: true})
         this.marvelService
             .getCharacter(id)
             .then(this.onCharLoaded)
@@ -82,7 +83,7 @@ class RandomChar extends Component {
 }
 
 const View = ({char}) => {
-    const {name, description, thumbnail, homepage, wiki, comics} = char;
+    const {id, name, description, thumbnail, homepage, wiki, comics} = char;
     const notImg = 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg';
     const imgStyle = {objectFit: 'cover'};
     if (thumbnail === notImg) {
