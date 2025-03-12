@@ -56,28 +56,71 @@ class CharList extends Component {
     state = {
         charList: [],
         loading: true,
-        error: false
+        error: false,
+        newItemLoading: false,
+        offset: 9,
+        charEnded: false
     }
     
     marvelService = new MarvelService();
 
     componentDidMount() {
-        // Генерируем массив из 9 промисов
+        this.loadStartItem();
+    }
+
+    loadStartItem = () => {
         const promises = Array(9).fill(null).map(() => {
             const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
             return this.marvelService.getCharacter(id); // Возвращаем промис
         });
 
-        // Обрабатываем все промисы
         Promise.all(promises)
-            .then(this.onCharListLoaded) // Успешная загрузка
-            .catch(this.onError);       // Ошибка
+            .then(this.onCharListLoaded)
+            .catch(this.onError);
+    }
+
+    loadMoreItems = () => {
+        this.onCharListLoading();
+        const promises = Array(9).fill(null).map(() => {
+            const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
+            return this.marvelService.getCharacter(id); // Возвращаем промис
+        });
+
+        Promise.all(promises)
+            .then(charList => {
+                let ended = this.state.offset >= 11 ? true : false;
+                this.setState({
+                    charList: [...this.state.charList, ...charList],
+                    newItemLoading: false,
+                    offset: this.state.offset + 9,
+                    charEnded: ended
+                })
+            })
+            .catch(this.onError);
+    }
+
+    onRequest =  () => {
+        this.onCharListLoading();
+        let a =  this.loadStartItem();
+        this.setState({
+            charList: [...this.state.charList, ...a],
+            newItemLoading: true
+        })
+    } 
+
+    onCharListLoading = () => {
+        this.setState({
+            newItemLoading: true
+        })
+
     }
 
     onCharListLoaded = (charList) => {
         this.setState({
             charList,
-            loading: false
+            loading: false,
+            newItemLoading: false,
+            offset: this.state.offset + 9,
         })
     }
 
@@ -117,20 +160,23 @@ class CharList extends Component {
 
     render() {
 
-        const {charList, loading, error} = this.state;
+        const {charList, loading, error, newItemLoading, offset, charEnded} = this.state;
         
         const items = this.renderItems(charList);
 
         const errorMessage = error ? <ErrorMessage/> : null;
         const spinner = loading ? <Spinner/> : null;
         const content = !(loading || error) ? items : null;
-
         return (
             <div className="char__list">
                 {errorMessage}
                 {spinner}
                 {content}
-                <button className="button button__main button__long">
+                <button className="button button__main button__long"
+                onClick={() => this.loadMoreItems(offset)}
+                disabled={newItemLoading}
+                style={{'display': charEnded ? 'none' : 'block'}}
+                >
                     <div className="inner">load more</div>
                 </button>
             </div>
