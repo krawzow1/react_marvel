@@ -1,25 +1,37 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import App from './components/app/App';
 import './style/style.scss';
+import { useEffect } from 'react';
 
-import MarvelService from './services/MarvelService';
 
-const marvelService = new MarvelService();
+import useMarvelService from './services/MarvelService';
+// const  {getAllCharacters, getCharacter} = useMarvelService;
 
-marvelService.getAllCharacters()
-  .then(res => {
-    res.data.results.forEach(item => console.log(item));
-  })
-  .catch(error => console.log(`Ошибка при получении всех персонажей`, error))
+// function Comics() {
+//   const {getComics} = useMarvelService();
+  
+//   useEffect(() => {
+//     getComics(100)
+//       .then(result => console.log(result))
+//       .catch(error => console.error(error));
+//   }, []);
+// }
+// getAllCharacters()
+//   .then(res => {
+//     res.data.results.forEach(item => console.log(item));
+//   })
+//   .catch(error => console.log(`Ошибка при получении всех персонажей`, error))
 
-marvelService.getCharacter(1011334)
-  .then(res => console.log(res))
+// getCharacter(1011334)
+//   .then(res => console.log(res))
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+ReactDOM
+  .createRoot(document.getElementById('root'))
+  .render(
+    <React.StrictMode>
+      <App />
+      {/* <Comics /> */}
+    </React.StrictMode>
+  )
 
